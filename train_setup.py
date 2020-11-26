@@ -90,7 +90,7 @@ testing_labels = np.array(test_labels)
 
 
 # Training the model
-num_epochs = 30
+num_epochs = 35
 history = model.fit(training_padded, training_labels, epochs=num_epochs, validation_data=(testing_padded, testing_labels), verbose=2)
 test_new_responses, test_ids = read_test_file()
 results = []
