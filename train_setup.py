@@ -59,7 +59,7 @@ tokenizer.fit_on_texts(train_responses)
 
 word_index = tokenizer.word_index
 # Setting the padding properties
-max_length = 100
+max_length = 500
 trunc_type='post'
 padding_type='post'
 
