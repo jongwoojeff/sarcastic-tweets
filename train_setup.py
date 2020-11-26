@@ -17,10 +17,12 @@ def read_train_file():
 
 def read_test_file():
     responses = []
+    ids = []
     with jsonlines.open('data/test.jsonl') as f:
         for line in f.iter():
             responses.append(line['response'].replace('@USER', '').strip())
-    return responses
+            ids.append(line['id'])
+    return responses, ids
 
 def splitter(labels, responses):
     train_labels = []
@@ -90,15 +92,16 @@ testing_labels = np.array(test_labels)
 # Training the model
 num_epochs = 30
 history = model.fit(training_padded, training_labels, epochs=num_epochs, validation_data=(testing_padded, testing_labels), verbose=2)
-# result = []
-outlier = 0
-test_new_responses = read_test_file()
+test_new_responses, test_ids = read_test_file()
+results = []
 for i in range(0, len(test_new_responses)):
     sequences = tokenizer.texts_to_sequences(test_new_responses[i])
     padded = pad_sequences(sequences, maxlen=max_length, padding=padding_type, truncating=trunc_type)
     result = model.predict(padded)
-    if (result[0] == result[1]):
-        outlier += 1
-    # result.append(model.predict(padded))
-
-print(outlier)
+    if (result[0] >= result[1]):
+        results.append(test_ids[i] + "," + "SARCASM")
+    else:
+        results.append(test_ids[i] + "," +"NOT_SARCASM")
+   
+with open("data/answer.txt", "w") as file:
+    file.writelines(results)
