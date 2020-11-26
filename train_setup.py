@@ -103,5 +103,7 @@ for i in range(0, len(test_new_responses)):
     else:
         results.append(test_ids[i] + "," +"NOT_SARCASM")
    
+sep = "\n"
+new_lines = sep.join(results)
 with open("data/answer.txt", "w") as file:
-    file.writelines(results)
+    file.writelines(new_lines)
