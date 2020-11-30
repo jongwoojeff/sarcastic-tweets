@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
 import jsonlines
 import tensorflow as tf
 import numpy as np
+import re
+import emoji
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# https://towardsdatascience.com/tensorflow-sarcasm-detection-in-20-mins-b549311b9e91
+# https://medium.com/@aniruddha.choudhury94/part-2-bert-fine-tuning-tutorial-with-pytorch-for-text-classification-on-the-corpus-of-linguistic-18057ce330e1
 
 def read_train_file():
     labels = []
@@ -12,7 +15,12 @@ def read_train_file():
     with jsonlines.open('data/train.jsonl') as f:
         for line in f.iter():
             labels.append(line['label'])
-            responses.append(line['response'].replace('@USER', '').strip())
+            response = line['response'].replace('@USER', '').replace('<URL>', '').strip()
+            response = re.sub(emoji.get_emoji_regexp(), r"", response)
+            response = response.replace(u' ’ ',u"'")
+            response = response.replace(u'“',u'"')
+            response = response.replace(u'”',u'"')
+            responses.append(response.encode("utf-8"))
     return labels, responses
 
 def read_test_file():
@@ -20,7 +28,12 @@ def read_test_file():
     ids = []
     with jsonlines.open('data/test.jsonl') as f:
         for line in f.iter():
-            responses.append(line['response'].replace('@USER', '').strip())
+            response = line['response'].replace('@USER', '').replace('<URL>', '').strip()
+            response = re.sub(emoji.get_emoji_regexp(), r"", response)
+            response = response.replace(u' ’ ',u"'")
+            response = response.replace(u'“',u'"')
+            response = response.replace(u'”',u'"')
+            responses.append(response.encode("utf-8"))
             ids.append(line['id'])
     return responses, ids
 
@@ -40,6 +53,17 @@ def splitter(labels, responses):
             train_responses.append(responses[i+ len(responses) / 2])
             test_labels.append(labels[i])
             test_responses.append(responses[i])
+    for i in range(0, 500):
+        test_labels.append(labels[i])
+        test_responses.append(responses[i])
+        test_labels.append(labels[i + 2500])
+        test_responses.append(responses[i + 2500])
+    for i in range(500, 2500):
+        train_labels.append(labels[i])
+        train_responses.append(responses[i])
+        train_labels.append(labels[i + 2500])
+        train_responses.append(responses[i + 2500])
+
     return train_labels, test_labels, train_responses, test_responses
 
 labels, responses = read_train_file()
@@ -55,11 +79,19 @@ oov_tok = "<oov>"
 
 # Fit the tokenizer on Training data
 tokenizer = Tokenizer(num_words=vocab_size, oov_token=oov_tok)
+
+# stop_words = set(stopwords.words('english'))  
+
+# for sentence in train_labels:
+#     word_tokens = word_tokenize(sentence)
+#     sentence = [w for w in word_tokens if not w in stop_words]
+
+# print(train_labels[0])
 tokenizer.fit_on_texts(train_responses)
 
 word_index = tokenizer.word_index
 # Setting the padding properties
-max_length = 500
+max_length = 128
 trunc_type='post'
 padding_type='post'
 
@@ -90,7 +122,7 @@ testing_labels = np.array(test_labels)
 
 
 # Training the model
-num_epochs = 35
+num_epochs = 10
 history = model.fit(training_padded, training_labels, epochs=num_epochs, validation_data=(testing_padded, testing_labels), verbose=2)
 test_new_responses, test_ids = read_test_file()
 results = []
