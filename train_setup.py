@@ -9,18 +9,26 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # https://medium.com/@aniruddha.choudhury94/part-2-bert-fine-tuning-tutorial-with-pytorch-for-text-classification-on-the-corpus-of-linguistic-18057ce330e1
 
+stopwords = []
+with open('data/stopwords.txt') as f:
+    stopwords = [line.rstrip() for line in f]
+
 def read_train_file():
     labels = []
     responses = []
     with jsonlines.open('data/train.jsonl') as f:
         for line in f.iter():
             labels.append(line['label'])
-            response = line['response'].replace('@USER', '').replace('<URL>', '').strip()
+            response = line['response'].replace('@USER', '').replace('<URL>', '').replace(',', '').strip()
             response = re.sub(emoji.get_emoji_regexp(), r"", response)
-            response = response.replace(u' ’ ',u"'")
-            response = response.replace(u'“',u'"')
-            response = response.replace(u'”',u'"')
-            responses.append(response.encode("utf-8"))
+            response = response.replace(u' ’ ',u"'").replace(u'“',u'"').replace(u'”',u'"').encode("utf-8")
+            response.lower()
+
+            querywords = response.split()
+
+            resultwords  = [word for word in querywords if word.lower() not in stopwords]
+            result = ' '.join(resultwords)
+            responses.append(result)
     return labels, responses
 
 def read_test_file():
@@ -28,12 +36,16 @@ def read_test_file():
     ids = []
     with jsonlines.open('data/test.jsonl') as f:
         for line in f.iter():
-            response = line['response'].replace('@USER', '').replace('<URL>', '').strip()
+            response = line['response'].replace('@USER', '').replace('<URL>', '').replace(',', '').strip()
             response = re.sub(emoji.get_emoji_regexp(), r"", response)
-            response = response.replace(u' ’ ',u"'")
-            response = response.replace(u'“',u'"')
-            response = response.replace(u'”',u'"')
-            responses.append(response.encode("utf-8"))
+            response = response.replace(u' ’ ',u"'").replace(u'“',u'"').replace(u'”',u'"').encode("utf-8")
+            response.lower()
+
+            querywords = response.split()
+
+            resultwords  = [word for word in querywords if word.lower() not in stopwords]
+            result = ' '.join(resultwords)
+            responses.append(result)
             ids.append(line['id'])
     return responses, ids
 
