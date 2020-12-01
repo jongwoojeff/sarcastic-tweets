@@ -19,11 +19,20 @@ def read_train_file():
     with jsonlines.open('data/train.jsonl') as f:
         for line in f.iter():
             labels.append(line['label'])
-            response = line['response'].replace('@USER', '').replace('<URL>', '').replace(',', '').strip()
+            response = line['response'].replace('@USER', '').replace('<URL>', '').replace(',', '').replace('.', '').strip()
             response = re.sub(emoji.get_emoji_regexp(), r"", response)
             response = response.replace(u' ’ ',u"'").replace(u'“',u'"').replace(u'”',u'"').encode("utf-8")
             response.lower()
-
+            
+            contexts = line['context']
+            for context in contexts:
+                context = context.replace('@USER', '').replace('<URL>', '').replace(',', '').replace('.', '').strip()
+                context = re.sub(emoji.get_emoji_regexp(), r"", context)
+                context = context.replace(u' ’ ',u"'").replace(u'“',u'"').replace(u'”',u'"').encode("utf-8")
+                context.lower()
+                response = response + " " + context
+            
+            response.lower()
             querywords = response.split()
 
             resultwords  = [word for word in querywords if word.lower() not in stopwords]
@@ -39,6 +48,15 @@ def read_test_file():
             response = line['response'].replace('@USER', '').replace('<URL>', '').replace(',', '').strip()
             response = re.sub(emoji.get_emoji_regexp(), r"", response)
             response = response.replace(u' ’ ',u"'").replace(u'“',u'"').replace(u'”',u'"').encode("utf-8")
+            response.lower()
+            contexts = line['context']
+            for context in contexts:
+                context = context.replace('@USER', '').replace('<URL>', '').replace(',', '').replace('.', '').strip()
+                context = re.sub(emoji.get_emoji_regexp(), r"", context)
+                context = context.replace(u' ’ ',u"'").replace(u'“',u'"').replace(u'”',u'"').encode("utf-8")
+                context.lower()
+                response = response + " " + context
+            
             response.lower()
 
             querywords = response.split()
@@ -79,6 +97,7 @@ def splitter(labels, responses):
     return train_labels, test_labels, train_responses, test_responses
 
 labels, responses = read_train_file()
+print(responses[0])
 for i in range(0, len(labels)):
     if (labels[i] == "SARCASM"):
         labels[i] = 1
@@ -92,13 +111,6 @@ oov_tok = "<oov>"
 # Fit the tokenizer on Training data
 tokenizer = Tokenizer(num_words=vocab_size, oov_token=oov_tok)
 
-# stop_words = set(stopwords.words('english'))  
-
-# for sentence in train_labels:
-#     word_tokens = word_tokenize(sentence)
-#     sentence = [w for w in word_tokens if not w in stop_words]
-
-# print(train_labels[0])
 tokenizer.fit_on_texts(train_responses)
 
 word_index = tokenizer.word_index
