@@ -39,37 +39,37 @@ import emoji
 
 # read_train_file()
 
-def read_test_file():
-    ids = []
-    responses = []
-    contexts = []
-    stopwords = []
-    with open('data/stopwords.txt') as f:
-        stopwords = [line.rstrip() for line in f]
+# def read_test_file():
+#     ids = []
+#     responses = []
+#     contexts = []
+#     stopwords = []
+#     with open('data/stopwords.txt') as f:
+#         stopwords = [line.rstrip() for line in f]
 
-    with jsonlines.open('data/test.jsonl') as f:
-        for line in f.iter():
-            ids.append(line['id'])
-            response = line['response'].replace('@USER', '').replace('<URL>', '').replace(',', '').strip()
-            response = re.sub(emoji.get_emoji_regexp(), r"", response)
-            response = response.replace(u' ’ ',u"'").replace(u'“',u'"').replace(u'”',u'"').encode("utf-8")
-            response.lower()
+#     with jsonlines.open('data/test.jsonl') as f:
+#         for line in f.iter():
+#             ids.append(line['id'])
+#             response = line['response'].replace('@USER', '').replace('<URL>', '').replace(',', '').strip()
+#             response = re.sub(emoji.get_emoji_regexp(), r"", response)
+#             response = response.replace(u' ’ ',u"'").replace(u'“',u'"').replace(u'”',u'"').encode("utf-8")
+#             response.lower()
 
-            querywords = response.split()
+#             querywords = response.split()
 
-            resultwords  = [word for word in querywords if word.lower() not in stopwords]
-            result = ' '.join(resultwords)
-            responses.append(result)
+#             resultwords  = [word for word in querywords if word.lower() not in stopwords]
+#             result = ' '.join(resultwords)
+#             responses.append(result)
             
-            # for texts in line['context']:
+#             # for texts in line['context']:
 
-            # context = line['context'].replace('@USER', '')
-            # contexts.append(context.replace('<url>', '').strip())
-    data = {'ids': ids, 'responses': responses}
-    df = pd.DataFrame(data, columns = ['ids','responses'])
-    df.to_csv('test_final.csv', index=False)  
+#             # context = line['context'].replace('@USER', '')
+#             # contexts.append(context.replace('<url>', '').strip())
+#     data = {'ids': ids, 'responses': responses}
+#     df = pd.DataFrame(data, columns = ['ids','responses'])
+#     df.to_csv('test_final.csv', index=False)  
 
-read_test_file()
+# read_test_file()
 
 # df_raw = pd.read_csv('train.csv')
 # df_raw['label'] = (df_raw['labels'] == 'SARCASM').astype('int')
@@ -94,5 +94,14 @@ read_test_file()
 # df_test = pd.concat([df_sarc_test, df_not_sarc_test], ignore_index=True, sort=False)
 
 # df_train.to_csv('data/train.csv', index=False)
+# df_valid.to_csv('data/valid.csv', index=False)
+# df_test.to_csv('data/test.csv', index=False)
+
+df_raw = pd.read_csv('test_final.csv')
+df_raw['id'] = df_raw['id']
+df_raw['response'] = df_raw['response']
+df_raw = df_raw.reindex(columns=['id', 'response'])
+
+df_raw.to_csv('data/test_final.csv', index=False)
 # df_valid.to_csv('data/valid.csv', index=False)
 # df_test.to_csv('data/test.csv', index=False)
