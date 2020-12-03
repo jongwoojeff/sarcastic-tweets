@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# initial trial of classification with a simple neural network
+# average performance = 60%
 import jsonlines
 import tensorflow as tf
 import numpy as np
@@ -6,8 +8,6 @@ import re
 import emoji
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-
-# https://medium.com/@aniruddha.choudhury94/part-2-bert-fine-tuning-tutorial-with-pytorch-for-text-classification-on-the-corpus-of-linguistic-18057ce330e1
 
 stopwords = []
 with open('data/stopwords.txt') as f:

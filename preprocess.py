@@ -5,8 +5,6 @@ import pandas as pd
 import re
 import emoji
 
-# https://towardsdatascience.com/bert-text-classification-using-pytorch-723dfb8b6b5b
-
 # def read_train_file():
 #     labels = []
 #     responses = []
