@@ -34,4 +34,11 @@ twitter_2,NOT_SARCASM
 ...
 
 # Evaluation
-![](https://github.com/jongwoojeff/sarcastic-tweets/blob/master/training_results.png)
+[Training Results](https://github.com/jongwoojeff/sarcastic-tweets/blob/master/training_results.png)
+
+### Competition Results 
+Precision: 0.614403600900225
+Recall:    0.91
+F-1:       0.7335423197492162
+
+
