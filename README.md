@@ -32,3 +32,6 @@ For Test, we've provided you the ***response*** and the ***context***. We also p
 twitter_1,SARCASM  
 twitter_2,NOT_SARCASM  
 ...
+
+# Evaluation
+![](https://github.com/jongwoojeff/sarcastic-tweets/blob/master/training_results.png)
