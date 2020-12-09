@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import torch
 
-# Preliminaries
-
 from torchtext.data import Field, TabularDataset, BucketIterator, Iterator
 
 # Models
@@ -40,7 +38,6 @@ id_field = Field(use_vocab=False, tokenize=tokenizer.encode, lower=False, includ
 response_field = Field(use_vocab=False, tokenize=tokenizer.encode, lower=False, include_lengths=False, batch_first=True,
                    fix_length=MAX_SEQ_LEN, pad_token=PAD_INDEX, unk_token=UNK_INDEX)
 fields = [('label', label_field), ('response', response_field)]
-# test_fields = [('id', id_field), ('response', response_field)]
 
 # TabularDataset
 
@@ -51,7 +48,7 @@ test_data.to_csv('/content/test_final.csv', index=False)
 test_final = TabularDataset(path='/content/test_final.csv', format='CSV', 
                                    fields=fields, skip_header=True)
 
-# # Iterators
+# Iterators
 
 train_iter = BucketIterator(train, batch_size=16, sort_key=lambda x: len(x.response),
                             device=device, train=True, sort=True, sort_within_batch=True)
@@ -74,7 +71,6 @@ class BERT(nn.Module):
         return loss, text_fea
 
 # Save and Load Functions
-
 def save_checkpoint(save_path, model, valid_loss):
 
     if save_path == None:
@@ -122,7 +118,6 @@ def load_metrics(load_path):
     return state_dict['train_loss_list'], state_dict['valid_loss_list'], state_dict['global_steps_list']
 
 # Training Function
-
 def train(model,
           optimizer,
           criterion = nn.BCELoss(),
@@ -216,7 +211,6 @@ plt.legend()
 plt.show() 
 
 # Evaluation Function
-
 def evaluate(model, test_loader):
     y_pred = []
     y_true = []
@@ -282,5 +276,8 @@ best_model = BERT().to(device)
 
 load_checkpoint('/content/drive/MyDrive/model.pt', best_model)
 
-# evaluate(best_model, test_iter)
+# evaluate training results
+evaluate(best_model, test_iter)
+
+# classify unkown test dataset
 evaluate_class(best_model, test_final_iter)
