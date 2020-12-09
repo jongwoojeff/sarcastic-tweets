@@ -33,6 +33,12 @@ twitter_1,SARCASM
 twitter_2,NOT_SARCASM  
 ...
 
+# Preprocessing
+Details for preproessing data can be found [here](https://github.com/jongwoojeff/sarcastic-tweets/blob/master/code/preprocess.py).
+
+# Model Details
+Initially, after preprocessing the data, I used a [simple Neural Network](https://github.com/jongwoojeff/sarcastic-tweets/blob/master/code/simple_NN.py) to predict the test data set. However, the results were not satisfying: achieved roughly 0.6 using f-1 measure. After a bit of research, I used BERT language model developed by Google and was able to get somewhat desired results. My implementaion of BERT can be found [here](https://github.com/jongwoojeff/sarcastic-tweets/blob/master/code/bert.py). To run this program, you can download and run a [Jupyter notebook file](https://github.com/jongwoojeff/sarcastic-tweets/blob/master/code/bert_demo.ipynb) of this implementation on Google Colab and utilize Colab's GPU.
+
 # Evaluation
 [Training Results](https://github.com/jongwoojeff/sarcastic-tweets/blob/master/training_results.png)
 
