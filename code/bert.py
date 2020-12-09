@@ -1,5 +1,7 @@
-# Libraries
+# Training and evaluation methods were adopted from Raymond Cheng's tutorial of "BERT Text Classification Using Pytorch". 
+# This tutorial can be found at [Towards Data Science](https://towardsdatascience.com)
 
+# Libraries
 import matplotlib.pyplot as plt
 import pandas as pd
 import torch
