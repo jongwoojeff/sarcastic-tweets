@@ -1,6 +1,3 @@
-# Project Proposal
-[project proposal](https://github.com/jongwoojeff/CourseProject/blob/main/Final%20Project%20Proposal.pdf)
-
 # Text Classification Competition: Twitter Sarcasm Detection 
 
 Dataset format:
